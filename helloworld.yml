@@ -3,9 +3,12 @@
   hosts: all
  
   tasks:
+  - name: Set Detail for host
+    set_fact:
+      defname: "blahlbh"
  
   - name: Hello World!
     shell: echo "{{nickname}}"
 
   - name: AnotherEcho
-    shell: echo "okay hi"
+    shell: echo "okay hi {{graphql_token}}"
