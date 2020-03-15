@@ -1,71 +1,74 @@
 # Initiates a deployment for a Lagoon environment that corresponds to the current inventory, 
 # and polls the status of the deployment until we get a success or failed status response.  
 ---
-- name: Initialize facts #this is applied to every host
-  set_fact:
-    failed_deployment: false
-    graphql_endpoint: "https://api.lagoon.amazeeio.cloud/graphql"
+- name: Deploy environments
+  hosts: all
+  tasks:
+    - name: Initialize facts #this is applied to every host
+      set_fact:
+        failed_deployment: false
+        graphql_endpoint: "https://api.lagoon.amazeeio.cloud/graphql"
 
-- name: Perform a POST against Lagoon to deploy environment
-  uri:
-    url: "{{ graphql_endpoint }}"
-    method: POST
-    body: "{{ lookup('template','deploy-environment.graphql') }}"
-    headers:
-      'Authorization': 'Bearer {{ graphql_token }}'
-      'Content-Type': 'application/json'
-      'Accept': '*/*'
-    body_format: json
-  register: deployment_response
-  delegate_to: localhost
-  changed_when: false
+    - name: Perform a POST against Lagoon to deploy environment
+      uri:
+        url: "{{ graphql_endpoint }}"
+        method: POST
+        body: "{{ lookup('template','deploy-environment.graphql') }}"
+        headers:
+          'Authorization': 'Bearer {{ graphql_token }}'
+          'Content-Type': 'application/json'
+          'Accept': '*/*'
+        body_format: json
+      register: deployment_response
+      delegate_to: localhost
+      changed_when: false
 
-- name: Fail the deployment if the response contains an error, or the response is invalid.
-  set_fact:
-    failed_deployment: true
-  when: (deployment_response is defined and
-        deployment_response.json.error is defined)
-        or
-        (deployment_response is defined and deployment_response.json.data.deployEnvironmentLatest is not defined)
+    - name: Fail the deployment if the response contains an error, or the response is invalid.
+      set_fact:
+        failed_deployment: true
+      when: (deployment_response is defined and
+            deployment_response.json.error is defined)
+            or
+            (deployment_response is defined and deployment_response.json.data.deployEnvironmentLatest is not defined)
 
-- name: Debug the deployment_response if it failed
-  debug:
-    msg: "Failed deployment: {{ lagoon_project }} Response: {{ deployment_response }}"
-  when: failed_deployment
+    - name: Debug the deployment_response if it failed
+      debug:
+        msg: "Failed deployment: {{ lagoon_project }} Response: {{ deployment_response }}"
+      when: failed_deployment
 
-- name: sleep for 60 seconds and continue with play
-  wait_for:
-    timeout: "{{ lagoon_deploy_delay|default(60) }}"
-  delegate_to: localhost
+    - name: sleep for 60 seconds and continue with play
+      wait_for:
+        timeout: "{{ lagoon_deploy_delay|default(60) }}"
+      delegate_to: localhost
 
-- name: Set openshift_project_name fact
-  set_fact:
-    openshift_project_name: "{{ inventory_hostname }}"
+    - name: Set openshift_project_name fact
+      set_fact:
+        openshift_project_name: "{{ inventory_hostname }}"
 
-#- name: Checking for complete/failed jobs
-#  uri:
-#    url: "{{ graphql_endpoint }}"
-#    method: POST
-#    body: "{{ lookup('template','check-environment-status.graphql') }}"
-#    headers:
-#      'Authorization': 'Bearer {{ graphql_token }}'
-#      'Content-Type': 'application/json'
-#      'Accept': '*/*'
-#    body_format: json
-#  register: deployment_status
-#  until:
-#    deployment_status is defined and deployment_status.json is defined and
-#    (deployment_status.json.data.environmentByOpenshiftProjectName.deployments[0].status == "complete"
-#    or deployment_status.json.data.environmentByOpenshiftProjectName.deployments[0].status == "failed")
-#  retries: "{{ lagoon_status_retries|default(30) }}"
-#  delay: "{{ lagoon_deploy_delay|default(60) }}"
-#  when: not failed_deployment
-#  delegate_to: localhost
-#  ignore_errors: yes
+    #- name: Checking for complete/failed jobs
+    #  uri:
+    #    url: "{{ graphql_endpoint }}"
+    #    method: POST
+    #    body: "{{ lookup('template','check-environment-status.graphql') }}"
+    #    headers:
+    #      'Authorization': 'Bearer {{ graphql_token }}'
+    #      'Content-Type': 'application/json'
+    #      'Accept': '*/*'
+    #    body_format: json
+    #  register: deployment_status
+    #  until:
+    #    deployment_status is defined and deployment_status.json is defined and
+    #    (deployment_status.json.data.environmentByOpenshiftProjectName.deployments[0].status == "complete"
+    #    or deployment_status.json.data.environmentByOpenshiftProjectName.deployments[0].status == "failed")
+    #  retries: "{{ lagoon_status_retries|default(30) }}"
+    #  delay: "{{ lagoon_deploy_delay|default(60) }}"
+    #  when: not failed_deployment
+    #  delegate_to: localhost
+    #  ignore_errors: yes
 
-#- name: Debug the deployment_status
-#  debug:
-#    msg: >
-#      "Deployment: {{ lagoon_project }}
-#      Status: {{ deployment_status }}"
+    #- name: Debug the deployment_status
+    #  debug:
+    #    msg: >
+    #      "Deployment: {{ lagoon_project }}
+    #      Status: {{ deployment_status }}"
 
