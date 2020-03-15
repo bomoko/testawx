@@ -6,3 +6,6 @@
  
   - name: Hello World!
     shell: echo "{{nickname}}"
+
+  - name: AnotherEcho
+    shell: echo "okay hi"
