@@ -45,30 +45,30 @@
       set_fact:
         openshift_project_name: "{{ inventory_hostname }}"
 
-    #- name: Checking for complete/failed jobs
-    #  uri:
-    #    url: "{{ graphql_endpoint }}"
-    #    method: POST
-    #    body: "{{ lookup('template','check-environment-status.graphql') }}"
-    #    headers:
-    #      'Authorization': 'Bearer {{ graphql_token }}'
-    #      'Content-Type': 'application/json'
-    #      'Accept': '*/*'
-    #    body_format: json
-    #  register: deployment_status
-    #  until:
-    #    deployment_status is defined and deployment_status.json is defined and
-    #    (deployment_status.json.data.environmentByOpenshiftProjectName.deployments[0].status == "complete"
-    #    or deployment_status.json.data.environmentByOpenshiftProjectName.deployments[0].status == "failed")
-    #  retries: "{{ lagoon_status_retries|default(30) }}"
-    #  delay: "{{ lagoon_deploy_delay|default(60) }}"
-    #  when: not failed_deployment
-    #  delegate_to: localhost
-    #  ignore_errors: yes
+    - name: Checking for complete/failed jobs
+     uri:
+       url: "{{ graphql_endpoint }}"
+       method: POST
+       body: "{{ lookup('template','check-environment-status.graphql') }}"
+       headers:
+         'Authorization': 'Bearer {{ graphql_token }}'
+         'Content-Type': 'application/json'
+         'Accept': '*/*'
+       body_format: json
+     register: deployment_status
+     until:
+       deployment_status is defined and deployment_status.json is defined and
+       (deployment_status.json.data.environmentByOpenshiftProjectName.deployments[0].status == "complete"
+       or deployment_status.json.data.environmentByOpenshiftProjectName.deployments[0].status == "failed")
+     retries: "{{ lagoon_status_retries|default(30) }}"
+     delay: "{{ lagoon_deploy_delay|default(60) }}"
+     when: not failed_deployment
+     delegate_to: localhost
+     ignore_errors: yes
 
-    #- name: Debug the deployment_status
-    #  debug:
-    #    msg: >
-    #      "Deployment: {{ lagoon_project }}
-    #      Status: {{ deployment_status }}"
+    - name: Debug the deployment_status
+     debug:
+       msg: >
+         "Deployment: {{ lagoon_project }}
+         Status: {{ deployment_status }}"
 
