@@ -67,8 +67,8 @@
       ignore_errors: yes
 
     - name: Debug the deployment_status
-       debug:
-         msg: >
-           "Deployment: {{ lagoon_project }}
-           Status: {{ deployment_status }}"
+      debug:
+        msg: >
+          "Deployment: {{ lagoon_project }}
+          Status: {{ deployment_status }}"
 
