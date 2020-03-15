@@ -11,4 +11,4 @@
     shell: echo "{{nickname}}"
 
   - name: AnotherEcho
-    shell: echo "okay hi {{defname}}"
+    shell: echo "okay hi {{graphql_token}}"
