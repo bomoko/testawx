@@ -1,0 +1,1 @@
+{"query":"mutation deploy {  deployEnvironmentLatest(input:{environment:{project:{name:\"{{ lagoon_project }}\"}, name:\"{{ lagoon_branch }}\"}})}","operationName":"deploy"}

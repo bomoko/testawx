@@ -1,0 +1,1 @@
+{"query":"{  environmentByOpenshiftProjectName(openshiftProjectName: \"{{ openshift_project_name }}\") {    name    autoIdle  deployments {      name      status     started      completed    }  }}"}
