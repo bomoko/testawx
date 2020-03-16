@@ -1,0 +1,29 @@
+# Initiates a deployment for a Lagoon environment that corresponds to the current inventory, 
+# and polls the status of the deployment until we get a success or failed status response.  
+---
+- name: get JWT
+  hosts: all
+  tasks:
+    - name: Initialize facts #this is applied to every host
+      set_fact:
+        failed_deployment: false
+        graphql_endpoint: "https://api.lagoon.amazeeio.cloud/graphql"
+
+    - name: get Site Aliases
+      uri:
+        url: "{{ graphql_endpoint }}"
+        method: POST
+        body: "{{ lookup('template','get-site-alias.graphql') }}"
+        headers:
+          'Authorization': 'Bearer {{ graphql_token }}'
+          'Content-Type': 'application/json'
+          'Accept': '*/*'
+        body_format: json
+      register: sa_response
+      delegate_to: localhost
+      changed_when: false
+      
+    - name: output SA response
+      debug:
+        msg: sa_response
+

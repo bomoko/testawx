@@ -1,0 +1,1 @@
+{ project:projectByName(name: "{{ lagoon_project }}") { environments { name openshiftProjectName } } }
