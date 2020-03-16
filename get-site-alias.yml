@@ -25,5 +25,5 @@
       
     - name: output SA response
       debug:
-        msg: sa_response
+        msg: "{{ sa_response }}"
 
