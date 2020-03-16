@@ -41,10 +41,6 @@
         timeout: "{{ lagoon_deploy_delay|default(60) }}"
       delegate_to: localhost
 
-    - name: Set openshift_project_name fact
-      set_fact:
-        openshift_project_name: "{{ inventory_hostname }}"
-
     - name: Checking for complete/failed jobs
       uri:
         url: "{{ graphql_endpoint }}"
