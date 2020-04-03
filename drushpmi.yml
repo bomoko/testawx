@@ -1,0 +1,9 @@
+---
+- hosts: all 
+  gather_facts: no
+  tasks:
+  - name: "Drush pmi on remote machine"
+    raw: "drush pmi --format=json && echo ''"
+    register: pmi_out
+
+  - debug: msg="{{ pmi_out.stdout }}"
