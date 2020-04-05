@@ -3,7 +3,7 @@
   gather_facts: no
   tasks:
   - name: "Drush pmi on remote machine"
-    raw: "drush pmi --format=json && echo ''"
+    raw: "drush pmi --format=json 2> /dev/null && echo ''"
     register: pmi_out
 
   - debug: msg="{{ pmi_out.stdout }}"

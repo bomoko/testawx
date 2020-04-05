@@ -1,0 +1,42 @@
+---
+- hosts: all 
+  gather_facts: no
+  tasks:
+    - block:
+      - name: "PHP version on remote machine"
+        raw: "php -r 'echo phpversion();' 2> /dev/null && echo ''"
+        register: version_out
+
+      - set_fact:
+          php_version: "{{ version_out.stdout }}"
+
+      - name: "drush status on remote machine"
+        raw: "drush status --format=json 2> /dev/null && echo ''"
+        register: status_out
+
+      - name: "Debugging status"
+        debug: msg="{{ status_out.stdout }}"
+
+      - set_fact:
+          drush_status: "{{ status_out.stdout | from_json }}"
+
+      - name: notifySlack
+        slack:
+          token: "{{ slack_token }}"
+          attachments:
+            - text: "Details for {{ inventory_hostname }}"
+              fields:
+                - title: "PHP version"
+                  value: "{{ php_version }}"
+                  short: true
+                - title: "Drupal version"
+                  value: "{{ drush_status['drush-version'] }}"
+                  short: true
+        delegate_to: localhost
+    
+      rescue:
+        - name: notifySlackError
+          slack:
+            token: "{{ slack_token }}"
+            msg: '{{ inventory_hostname }} failed to run'
+          delegate_to: localhost
