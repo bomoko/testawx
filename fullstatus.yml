@@ -3,6 +3,13 @@
   gather_facts: no
   tasks:
     - block:
+      - name: "PHP version on remote machine"
+        raw: "php -r 'echo phpversion();' 2> /dev/null && echo ''"
+        register: version_out
+
+      - set_fact:
+          php_version: "{{ version_out.stdout }}"
+
       - name: "drush status on remote machine"
         raw: "drush status --format=json 2> /dev/null && echo ''"
         register: status_out
@@ -19,6 +26,9 @@
           attachments:
             - text: "Details for {{ inventory_hostname }}"
               fields:
+                - title: "PHP version"
+                  value: "{{ php_version }}"
+                  short: true
                 - title: "Drupal version"
                   value: "{{ drush_status['drupal-version'] }}"
                   short: true
