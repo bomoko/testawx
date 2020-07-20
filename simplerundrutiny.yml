@@ -4,7 +4,7 @@
   tasks:
     - block:
       - name: "Run Drutiny"
-        raw: "wget -O /tmp/drutiny_algm.phar && LAGOON_DRUTINY_PROJECT_NAME={{ LAGOON_DRUTINY_PROJECT_NAME }} LAGOON_DRUTINY_ENVIRONMENT_NAME={{ LAGOON_DRUTINY_ENVIRONMENT_NAME }} && https://github.com/bomoko/drutiny/raw/algm_release/releases/drutiny.phar && php /tmp/drutiny_algm.phar profile:run ALGMbasicaudit @self && rm /tmp/drutiny_algm.phar"
+        raw: "wget -O /tmp/drutiny_algm.phar https://github.com/bomoko/drutiny/raw/algm_release/releases/drutiny.phar && LAGOON_DRUTINY_PROJECT_NAME={{ LAGOON_DRUTINY_PROJECT_NAME }} LAGOON_DRUTINY_ENVIRONMENT_NAME={{ LAGOON_DRUTINY_ENVIRONMENT_NAME }} && php /tmp/drutiny_algm.phar profile:run ALGMbasicaudit @self && rm /tmp/drutiny_algm.phar"
         register: status_out
 
       - name: "Debugging status"
