@@ -1,0 +1,12 @@
+---
+- hosts: all 
+  gather_facts: no
+  tasks:
+    - block:
+      - name: "echo vars"
+        raw: "LAGOON_DRUTINY_PROJECT_NAME={{ LAGOON_DRUTINY_PROJECT_NAME }} LAGOON_DRUTINY_ENVIRONMENT_NAME={{ LAGOON_DRUTINY_ENVIRONMENT_NAME }};echo $LAGOON_DRUTINY_ENVIRONMENT_NAME $LAGOON_DRUTINY_PROJECT_NAME"
+        register: status_out
+
+      - name: "Debugging status"
+        debug: msg="{{ status_out.stdout }}"
+
