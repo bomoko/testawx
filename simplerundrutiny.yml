@@ -9,7 +9,7 @@
         register: download_out
 
       - name: "Run Drutiny"
-        raw: "LAGOON_DRUTINY_WEBHOOK_URL=https://hooks.lagoon.amazeeio.cloud LAGOON_DRUTINY_PROJECT_NAME={{ LAGOON_DRUTINY_PROJECT_NAME }} LAGOON_DRUTINY_ENVIRONMENT_NAME={{ LAGOON_DRUTINY_ENVIRONMENT_NAME }} php /tmp/drutiny_algm.phar --format=lagoon profile:run ALGMbasicaudit @self"
+        raw: "LAGOON_DRUTINY_WEBHOOK_URL=https://hooks.lagoon.amazeeio.cloud LAGOON_DRUTINY_PROJECT_NAME={{ LAGOON_DRUTINY_PROJECT_NAME }} LAGOON_DRUTINY_ENVIRONMENT_NAME={{ LAGOON_DRUTINY_ENVIRONMENT_NAME }} php /tmp/drutiny_algm.phar --format=lagoon profile:run d8 @self"
         register: drutiny_out
 
       - name: "Remove Drutiny"
